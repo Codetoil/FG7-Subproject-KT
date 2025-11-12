@@ -14,12 +14,11 @@ println(
 )
 
 minecraft {
-	/*mappings(
+	mappings(
 		if (commonMod.propOrNull("parchment_mappings") != null) "parchment" else "official",
 		if (commonMod.propOrNull("parchment_mappings") != null)
 			"${commonMod.minecraft_version}-${commonMod.prop("parchment_mappings")}" else commonMod.minecraft_version
-	)*/
-	mappings("official", commonMod.minecraft_version)
+	)
 
 	//setAccessTransformers(true)
 
