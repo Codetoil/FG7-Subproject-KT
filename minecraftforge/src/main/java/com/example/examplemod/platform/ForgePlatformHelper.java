@@ -19,4 +19,14 @@ public class ForgePlatformHelper {
 
         return !FMLLoader.isProduction();
     }
+
+	/**
+	 * Gets the name of the environment type as a string.
+	 *
+	 * @return The name of the environment type.
+	 */
+	public String getEnvironmentName() {
+
+		return isDevelopmentEnvironment() ? "development":"production";
+	}
 }
