@@ -13,6 +13,11 @@ println(
 		"Arch: ${providers.systemProperty("os.arch").get()}"
 )
 
+repositories {
+	maven (minecraft.mavenizer)
+	maven(fg.minecraftLibsMaven)
+}
+
 minecraft {
 	mappings(
 		if (mod.propOrNull("parchment_mappings") != null) "parchment" else "official",
