@@ -2,44 +2,18 @@ pluginManagement {
 	repositories {
 		gradlePluginPortal()
 		mavenCentral()
-		maven("https://maven.quiltmc.org/repository/release/") { name = "QuiltMC" }
-		maven("https://maven.fabricmc.net/") { name = "FabricMC" }
 		maven("https://maven.minecraftforge.net") { name = "MinecraftForge" }
-		maven("https://maven.kikugie.dev/snapshots")
-		maven("https://maven.kikugie.dev/releases")
 	}
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.7.6"
 	id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+	id("net.minecraftforge.accesstransformers") version "5.0.1" apply false
+	id("net.minecraftforge.gradle") version "7.0.0-beta.46" apply false
+	id("net.minecraftforge.jarjar") version "0.2.3" apply false
 }
 
-val commonVersions =
-	providers.gradleProperty("stonecutter_enabled_common_versions").orNull?.split(",")?.map { it.trim() } ?: emptyList()
-val minecraftforgeVersions =
-	providers.gradleProperty("stonecutter_enabled_minecraftforge_versions").orNull?.split(",")?.map { it.trim() }
-		?: emptyList()
-val dists = mapOf(
-	"common" to commonVersions,
-	"minecraftforge" to minecraftforgeVersions,
-)
-val uniqueVersions = dists.values.flatten().distinct()
+include(":minecraftforge")
 
-stonecutter {
-	kotlinController = true
-	centralScript = "build.gradle.kts"
-
-	create(rootProject) {
-		versions(*uniqueVersions.toTypedArray())
-
-		dists.forEach { (branchName, branchVersions) ->
-			branch(branchName) {
-				versions(*branchVersions.toTypedArray())
-			}
-		}
-	}
-}
-
-rootProject.name = "Stonecutter-MultiLoader-Template"
+rootProject.name = "FG7-Subproject-KT"
 

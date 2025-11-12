@@ -3,15 +3,15 @@ plugins {
 	id("idea")
 }
 
-version = "${loader}-${commonMod.version}+mc${stonecutterBuild.current.version}"
+version = mod.version
 
 base {
-	archivesName = commonMod.id
+	archivesName = mod.id
 }
 
 java {
-	println("Java ${commonProject.prop("java.version")}")
-	toolchain.languageVersion = JavaLanguageVersion.of(commonProject.prop("java.version")!!)
+	println("Java ${project.prop("java.version")}")
+	toolchain.languageVersion = JavaLanguageVersion.of(project.prop("java.version")!!)
 	// withSourcesJar()
 	// withJavadocJar()
 }
@@ -38,21 +38,21 @@ repositories {
 tasks {
 	processResources {
 		val expandProps = mapOf(
-			"java_version" to commonMod.propOrNull("java.version"),
-			"version" to commonMod.version,
-			"group" to commonMod.group,
-			"mod_name" to commonMod.name,
-			"mod_author" to commonMod.author,
-			"mod_id" to commonMod.id,
-			"license" to commonMod.license,
-			"description" to commonMod.description,
-			"credits" to commonMod.credits,
-			"minecraft_version" to commonMod.propOrNull("minecraft_version"),
-			"minecraft_version_range" to commonMod.propOrNull("minecraft_version_range"),
-			"minecraftforge_version" to commonMod.propOrNull("minecraftforge_version"),
-			"minecraftforge_version_range" to commonMod.propOrNull("minecraftforge_version_range"),
+			"java_version" to mod.propOrNull("java.version"),
+			"version" to mod.version,
+			"group" to mod.group,
+			"mod_name" to mod.name,
+			"mod_author" to mod.author,
+			"mod_id" to mod.id,
+			"license" to mod.license,
+			"description" to mod.description,
+			"credits" to mod.credits,
+			"minecraft_version" to mod.propOrNull("minecraft_version"),
+			"minecraft_version_range" to mod.propOrNull("minecraft_version_range"),
+			"minecraftforge_version" to mod.propOrNull("minecraftforge_version"),
+			"minecraftforge_version_range" to mod.propOrNull("minecraftforge_version_range"),
 			"minecraftforge_eventbus_validator_version" to
-				commonMod.propOrNull("minecraftforge_eventbus_validator_version"),
+				mod.propOrNull("minecraftforge_eventbus_validator_version"),
 		).filterValues { it?.isNotEmpty() == true }.mapValues { (_, v) -> v!! }
 
 		val jsonExpandProps = expandProps.mapValues { (_, v) -> v.replace("\n", "\\\\n") }
@@ -67,8 +67,4 @@ tasks {
 
 		inputs.properties(expandProps)
 	}
-}
-
-tasks.named("processResources") {
-	dependsOn(":common:${commonMod.propOrNull("minecraft_version")}:stonecutterGenerate")
 }

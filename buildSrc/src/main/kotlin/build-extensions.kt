@@ -1,21 +1,8 @@
-import dev.kikugie.stonecutter.build.StonecutterBuildExtension
-import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
 val Project.mod: ModData get() = ModData(this)
 fun Project.prop(key: String): String? = findProperty(key)?.toString()
-
-
-val Project.stonecutterBuild get() = extensions.getByType<StonecutterBuildExtension>()
-val Project.stonecutterController get() = extensions.getByType<StonecutterControllerExtension>()
-
-val Project.common
-	get() = requireNotNull(stonecutterBuild.node.sibling("common")) {
-		"No common project for $project"
-	}
-val Project.commonProject get() = rootProject.project(stonecutterBuild.current.project)
-val Project.commonMod get() = commonProject.mod
 
 val Project.loader: String? get() = prop("loader")
 
@@ -29,11 +16,10 @@ value class ModData(private val project: Project) {
 	val description: String get() = modProp("description")
 	val license: String get() = modProp("license")
 	val credits: String get() = modProp("credits")
-	val minecraft_version: String get() = propOrNull("minecraft_version") ?: project.stonecutterBuild.current.version
+	val minecraft_version: String get() = prop("minecraft_version")
 
 	fun propOrNull(key: String) = project.prop(key)
 	fun prop(key: String) = requireNotNull(propOrNull(key)) { "Missing '$key'" }
 	fun modPropOrNull(key: String) = project.prop("mod.$key")
 	fun modProp(key: String) = requireNotNull(modPropOrNull(key)) { "Missing 'mod.$key'" }
-	fun modrinth(name: String, version: String) = "maven.modrinth:$name:$version"
 }

@@ -6,9 +6,4 @@ plugins {
 repositories {
 	mavenCentral()
 	gradlePluginPortal()
-	maven("https://maven.kikugie.dev/snapshots")
-}
-
-dependencies {
-	implementation("dev.kikugie:stonecutter:0.7.6")
 }

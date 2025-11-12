@@ -1,5 +1,5 @@
 plugins {
-	`multiloader-loader`
+	`mod-plugin`
 	id("net.minecraftforge.gradle")
 	id("net.minecraftforge.jarjar")
 	// id("net.minecraftforge.accesstransformers")
@@ -15,9 +15,9 @@ println(
 
 minecraft {
 	mappings(
-		if (commonMod.propOrNull("parchment_mappings") != null) "parchment" else "official",
-		if (commonMod.propOrNull("parchment_mappings") != null)
-			"${commonMod.minecraft_version}-${commonMod.prop("parchment_mappings")}" else commonMod.minecraft_version
+		if (mod.propOrNull("parchment_mappings") != null) "parchment" else "official",
+		if (mod.propOrNull("parchment_mappings") != null)
+			"${mod.minecraft_version}-${mod.prop("parchment_mappings")}" else mod.minecraft_version
 	)
 
 	//setAccessTransformers(true)
@@ -32,22 +32,22 @@ minecraft {
 
 			systemProperty("eventbus.api.strictRuntimeChecks", "true")
 
-			//args ("-mixin.config=${commonMod.id}.mixins.json")
+			//args ("-mixin.config=${mod.id}.mixins.json")
 
 			classpath(sourceSets.main.get())
 		}
 
 		register("client") {
-			systemProperty("forge.enabledGameTestNamespaces", commonMod.id)
+			systemProperty("forge.enabledGameTestNamespaces", mod.id)
 		}
 
 		register("server") {
-			systemProperty("forge.enabledGameTestNamespaces", commonMod.id)
+			systemProperty("forge.enabledGameTestNamespaces", mod.id)
 			args("--nogui")
 		}
 
 		register("gameTestServer") {
-			systemProperty("forge.enabledGameTestNamespaces", commonMod.id)
+			systemProperty("forge.enabledGameTestNamespaces", mod.id)
 		}
 
 		register("data") {
@@ -55,7 +55,7 @@ minecraft {
 
 			args(
 				"--mod",
-				commonMod.id,
+				mod.id,
 				"--all",
 				"--output",
 				layout.projectDirectory.dir("src/generated/resources"),
@@ -83,13 +83,12 @@ dependencies {
 	// The "userdev" classifier will be requested and setup by ForgeGradle.
 	// If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
 	// then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
-	implementation(minecraft.dependency("net.minecraftforge:forge:${commonMod.minecraft_version}-${commonMod.prop("minecraftforge_version")}"))
+	implementation(minecraft.dependency("net.minecraftforge:forge:${mod.minecraft_version}-${mod.prop("minecraftforge_version")}"))
 
 	// Forge 1.21.6+ uses EventBus 7, which shifts most of its runtime validation to compile-time via an annotation processor
 	// to improve performance in production environments. This line is required to enable said compile-time validation
 	// in your development environment, helping you catch issues early.
-	if (stonecutter.eval(stonecutter.current.version, ">=1.21.6"))
-		annotationProcessor("net.minecraftforge:eventbus-validator:${commonMod.prop("minecraftforge_eventbus_validator_version")}")
+	annotationProcessor("net.minecraftforge:eventbus-validator:${mod.prop("minecraftforge_eventbus_validator_version")}")
 
 	// Example mod dependency with JEI
 	// The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -110,27 +109,6 @@ dependencies {
 
 tasks.withType(JavaCompile::class).configureEach {
 	options.encoding = "UTF-8" // Use the UTF-8 charset for Java compilation
-}
-
-tasks {
-	processResources {
-		exclude("${mod.id}.accesswidener")
-	}
-
-	register<Copy>("copyAT") {
-		val atFile =
-			project(":common").file("src/main/resources/accesstransformers/accesstransformer-${commonMod.minecraft_version}.cfg")
-		from(atFile) {
-			rename("accesstransformer-${commonMod.minecraft_version}.cfg", "accesstransformer.cfg")
-		}
-		setDuplicatesStrategy(DuplicatesStrategy.INHERIT)
-		into("src/main/resources/META-INF")
-		mustRunAfter(common.project.tasks.getByName("stonecutterMerge"))
-	}
-}
-
-tasks.named("stonecutterPrepare") {
-	finalizedBy(tasks.named("copyAT"))
 }
 
 sourceSets.forEach {
