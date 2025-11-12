@@ -15,6 +15,7 @@ println(
 
 repositories {
 	maven (minecraft.mavenizer)
+	maven(fg.forgeMaven)
 	maven(fg.minecraftLibsMaven)
 }
 
